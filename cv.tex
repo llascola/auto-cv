@@ -24,194 +24,145 @@
 %----------------------------------------------------------------------------------------
 %	DOCUMENT DEFINITION
 %----------------------------------------------------------------------------------------
-
-% article class because we want to fully customize the page and not use a cv template
 \documentclass[a4paper,12pt]{article}
-
-%----------------------------------------------------------------------------------------
-%	FONT
-%----------------------------------------------------------------------------------------
-
-% % fontspec allows you to use TTF/OTF fonts directly
-% \usepackage{fontspec}
-% \defaultfontfeatures{Ligatures=TeX}
-
-% % modified for ShareLaTeX use
-% \setmainfont[
-% SmallCapsFont = Fontin-SmallCaps.otf,
-% BoldFont = Fontin-Bold.otf,
-% ItalicFont = Fontin-Italic.otf
-% ]
-% {Fontin.otf}
 
 %----------------------------------------------------------------------------------------
 %	PACKAGES
 %----------------------------------------------------------------------------------------
-\usepackage{url}
-\usepackage{parskip} 	
-
-%other packages for formatting
-\RequirePackage{color}
-\RequirePackage{graphicx}
-\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage[T1]{fontenc}        % correct hyphenation/encoding for accented (Spanish) text
+\usepackage[spanish,es-noshorthands,es-nolists]{babel} % Spanish hyphenation, without babel's list/shorthand changes
+\usepackage{parskip}
+\usepackage[dvipsnames]{xcolor} % 'usenames' removed (obsolete/ignored in xcolor)
 \usepackage[scale=0.9]{geometry}
-
-%tabularx environment
 \usepackage{tabularx}
-
-%for lists within experience section
-\usepackage{enumitem}
-
-% centered version of 'X' col. type
-\newcolumntype{C}{>{\centering\arraybackslash}X} 
-
-%to prevent spillover of tabular into next pages
-\usepackage{supertabular}
-\usepackage{tabularx}
-\newlength{\fullcollw}
-\setlength{\fullcollw}{0.47\textwidth}
-
-%custom \section
-\usepackage{titlesec}				
-\usepackage{multicol}
-\usepackage{multirow}
-
-%CV Sections inspired by: 
-%http://stefano.italians.nl/archives/26
-\titleformat{\section}{\Large\scshape\raggedright}{}{0em}{}[\titlerule]
-\titlespacing{\section}{0pt}{10pt}{10pt}
-
-%for publications
-\usepackage[style=authoryear,sorting=ynt, maxbibnames=2]{biblatex}
-
-%Setup hyperref package, and colours for links
+\usepackage{enumitem}           % used by the joblong environment (bullet lists)
+\usepackage{titlesec}
+\usepackage{fontawesome5}       % social icons
 \usepackage[unicode, draft=false]{hyperref}
+
 \definecolor{linkcolour}{rgb}{0,0.2,0.6}
 \hypersetup{colorlinks,breaklinks,urlcolor=linkcolour,linkcolor=linkcolour}
-\addbibresource{citations.bib}
-\setlength\bibitemsep{1em}
 
-%for social icons
-\usepackage{fontawesome5}
+% centered version of the 'X' column type
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+% left-aligned (ragged-right) X: avoids stretching short rows -> no underfull warnings
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
 
-%debug page outer frames
-%\usepackage{showframe}
-
+% custom \section  (inspired by http://stefano.italians.nl/archives/26)
+\titleformat{\section}{\Large\scshape\raggedright}{}{0em}{}[\titlerule]
+\titlespacing*{\section}{0pt}{10pt}{10pt}
 
 % job listing environments
 \newenvironment{jobshort}[2]
     {
     \begin{tabularx}{\linewidth}{@{}l X r@{}}
-    \textbf{#1} & \hfill &  #2 \\[3.75pt]
+    \textbf{#1} & \hfill & #2 \\[3.75pt]
     \end{tabularx}
     }
-    {
-    }
+    {}
 
 \newenvironment{joblong}[2]
     {
     \begin{tabularx}{\linewidth}{@{}l X r@{}}
-    \textbf{#1} & \hfill &  #2 \\[3.75pt]
+    \textbf{#1} & \hfill & #2 \\[3.75pt]
     \end{tabularx}
-    \begin{minipage}[t]{\linewidth}
-    \begin{itemize}[nosep,after=\strut, leftmargin=1em, itemsep=3pt,label=--]
+    \begin{itemize}[nosep, after=\strut, leftmargin=1em, itemsep=3pt, label=--]
     }
     {
     \end{itemize}
-    \end{minipage}    
     }
-
-
 
 %----------------------------------------------------------------------------------------
 %	BEGIN DOCUMENT
 %----------------------------------------------------------------------------------------
 \begin{document}
-
-% non-numbered pages
-\pagestyle{empty} 
+\pagestyle{empty}
 
 %----------------------------------------------------------------------------------------
 %	TITLE
 %----------------------------------------------------------------------------------------
-
-% \begin{tabularx}{\linewidth}{ @{}X X@{} }
-% \huge{Your Name}\vspace{2pt} & \hfill \emoji{incoming-envelope} email@email.com \\
-% \raisebox{-0.05\height}\faGithub\ username \ | \
-% \raisebox{-0.00\height}\faLinkedin\ username \ | \ \raisebox{-0.05\height}\faGlobe \ mysite.com  & \hfill \emoji{calling} number
-% \end{tabularx}
-
 \begin{tabularx}{\linewidth}{@{} C @{}}
-\Huge{Your Name} \\[7.5pt]
-\href{https://github.com/username}{\raisebox{-0.05\height}\faGithub\ username} \ $|$ \ 
-\href{https://linkedin.com/in/username}{\raisebox{-0.05\height}\faLinkedin\ username} \ $|$ \ 
-\href{https://mysite.com}{\raisebox{-0.05\height}\faGlobe \ mysite.com} \ $|$ \ 
-\href{mailto:email@mysite.com}{\raisebox{-0.05\height}\faEnvelope \ email@mysite.com} \ $|$ \ 
-\href{tel:+000000000000}{\raisebox{-0.05\height}\faMobile \ +00.00.000.000} \\
+{\Huge Luciano Scola} \\[7.5pt]
+\href{https://github.com/llascola}{\raisebox{-0.05\height}{\faGithub}\ llascola} \ $|$ \
+\href{https://linkedin.com/in/llascola}{\raisebox{-0.05\height}{\faLinkedin}\ llascola} \ $|$ \
+\href{mailto:lucianoluigiscola@gmail.com}{\raisebox{-0.05\height}{\faEnvelope}\ lucianoluigiscola@gmail.com} \ $|$ \
+\href{tel:+5493415622332}{\raisebox{-0.05\height}{\faMobile}\ +54 9 341 5622-332} \\
 \end{tabularx}
 
 %----------------------------------------------------------------------------------------
-% EXPERIENCE SECTIONS
+%	EXPERIENCE
 %----------------------------------------------------------------------------------------
+\section{Resumen Profesional}
+Desarrollador de software con sólida formación en Ciencias de la Computación. Especializado en backend, arquitecturas distribuidas y aplicación de fundamentos matemáticos en soluciones tecnológicas. Actualmente desarrollando productos Fintech en LB Finanzas con un enfoque en escalabilidad y automatización.
 
-%Interests/ Keywords/ Summary
-\section{Summary}
-This CV can also be automatically compiled and published using GitHub Actions. For details, \href{https://github.com/jitinnair1/autoCV}{click here}.
+Rosario, Santa Fe, Argentina.
 
-%Experience
-\section{Work Experience}
+\section{Experiencia Laboral}
 
-\begin{jobshort}{Designation}{Jan 2021 - present}
-long long line of blah blah that will wrap when the table fills the column width long long line of blah blah that will wrap when the table fills the column width long long line of blah blah that will wrap when the table fills the column width long long line of blah blah that will wrap when the table fills the column width
+\begin{joblong}{Full Stack Developer | LB Finanzas}{Enero 2025 - Presente}
+\item Diseño y desarrollo de microservicios en Go aplicando Arquitectura Hexagonal y Domain-Driven Design (DDD), con flujos de trabajo asíncronos y desacoplados basados en eventos (Pub/Sub).
+\item Desarrollo de servicios transaccionales para operar en mercados de EE.UU. mediante integración con Alpaca API.
+\item Implementación de sistemas de reconciliación de eventos para garantizar la integridad de datos, y \textit{cronjobs} para alertas de precios en tiempo real y ejecución automática de órdenes.
+\item Automatización integral de procesos de \textit{onboarding} para empresas y gestión de documentación legal, optimizando los flujos de cumplimiento normativo (Compliance).
+\item Desarrollo e implementación de interfaces frontend para la integración y consumo de los servicios backend desplegados.
+\end{joblong}
+
+\vspace{5pt}
+
+\begin{jobshort}{Ayudante de Cátedra - UNR}{Marzo 2023 - Diciembre 2024}
+Ayudante de Segunda en las cátedras de Programación I, Lenguajes Formales y Computabilidad, y Lógica en la carrera de Licenciatura en Ciencias de la Computación.
 \end{jobshort}
 
-
-\begin{joblong}{Designation}{Mar 2019 - Jan 2021}
-\item long long line of blah blah that will wrap when the table fills the column width
-\item again, long long line of blah blah that will wrap when the table fills the column width but this time even more long long line of blah blah. again, long long line of blah blah that will wrap when the table fills the column width but this time even more long long line of blah blah
-\end{joblong}
-  
-%Projects
-\section{Projects}
+%----------------------------------------------------------------------------------------
+%	PROJECTS
+%----------------------------------------------------------------------------------------
+\section{Proyectos}
 
 \begin{tabularx}{\linewidth}{ @{}l r@{} }
-\textbf{Some Project} & \hfill \href{https://some-link.com}{Link to Demo} \\[3.75pt]
-\multicolumn{2}{@{}X@{}}{long long line of blah blah that will wrap when the table fills the column width long long line of blah blah that will wrap when the table fills the column width long long line of blah blah that will wrap when the table fills the column width long long line of blah blah that will wrap when the table fills the column width}  \\
+\textbf{MemCache} & \hfill \href{https://github.com/AgusM01/MiniMemcached}{Link del Repositorio} \\[3.75pt]
+\multicolumn{2}{@{}X@{}}{Tecnologías utilizadas: C, Erlang, modelo Cliente-Servidor, Concurrencia.}  \\
+\end{tabularx}
+
+\begin{tabularx}{\linewidth}{ @{}l r@{} }
+\textbf{Compilador FD4} & \hfill \href{https://github.com/llascola/FD4-compiler}{Link del Repositorio} \\[3.75pt]
+\multicolumn{2}{@{}X@{}}{Tecnologías utilizadas: Haskell, Mónadas, DSL, Máquinas Abstractas, Programación Funcional.}  \\
+\end{tabularx}
+
+\begin{tabularx}{\linewidth}{ @{}l r@{} }
+\textbf{Compresor de Archivos} & \hfill \href{https://github.com/llascola/compresor-huffmancode}{Link del Repositorio} \\[3.75pt]
+\multicolumn{2}{@{}X@{}}{Tecnologías utilizadas: C, Codificación de Huffman.}  \\
+\end{tabularx}
+
+\begin{tabularx}{\linewidth}{ @{}l r@{} }
+\textbf{Corrector Ortográfico} & \hfill \href{https://github.com/llascola/spell-checker}{Link del Repositorio} \\[3.75pt]
+\multicolumn{2}{@{}X@{}}{Tecnologías utilizadas: C, Tablas Hash.}  \\
+\end{tabularx}
+
+\begin{tabularx}{\linewidth}{ @{}l r@{} }
+\textbf{Generador de Sopas de Letras} & \hfill \href{https://github.com/llascola/sopa-letras-backtracking}{Link del Repositorio} \\[3.75pt]
+\multicolumn{2}{@{}X@{}}{Tecnologías utilizadas: Python, C.}  \\
 \end{tabularx}
 
 %----------------------------------------------------------------------------------------
 %	EDUCATION
 %----------------------------------------------------------------------------------------
-\section{Education}
-\begin{tabularx}{\linewidth}{@{}l X@{}}	
-2030 - present & PhD (Subject) at \textbf{University} \hfill \normalsize (GPA: 4.0/4.0) \\
-
-2023 - 2027 & Bachelor's Degree at \textbf{College} \hfill (GPA: 4.0/4.0) \\ 
-
-2022 & Class 12th Some Board \hfill  (Grades) \\
-
-2021 & Class 10th Some Board \hfill  (Grades) \\
+\section{Educación}
+\begin{tabularx}{\linewidth}{@{}l L@{}}
+2021 - Presente & Licenciatura en Ciencias de la Computación, 75\% completada. \textbf{UNR} \\
 \end{tabularx}
-
-%----------------------------------------------------------------------------------------
-%	PUBLICATIONS
-%----------------------------------------------------------------------------------------
-\section{Publications}
-\begin{refsection}[citations.bib]
-\nocite{*}
-\printbibliography[heading=none]
-\end{refsection}
 
 %----------------------------------------------------------------------------------------
 %	SKILLS
 %----------------------------------------------------------------------------------------
-\section{Skills}
-\begin{tabularx}{\linewidth}{@{}l X@{}}
-Some Skills &  \normalsize{This, That, Some of this and that etc.}\\
-Some More Skills  &  \normalsize{Also some more of this, Some more that, And some of this and that etc.}\\  
+\section{Habilidades}
+\begin{tabularx}{\linewidth}{@{}l L@{}}
+Nivel de Inglés        & B2 \\
+Matemáticas Avanzadas  & Álgebra Abstracta, Análisis Matemático, Grafos, Probabilidad y Estadística. \\
+Arquitectura de Software & Microservicios, Domain-Driven Design (DDD), Arquitectura Hexagonal, Event-Driven (Pub/Sub). \\
+Desarrollo Backend     & Go (Golang), Node.js, Python, C/C++, REST APIs, SQL, Integraciones Fintech. \\
+Desarrollo Frontend    & JavaScript, React, React Native. \\
+Automatización         & Shell scripting, Cronjobs, Reconciliación de datos, Linux/UNIX administration. \\
+Inteligencia Artificial & Conocimiento teórico. Uso de herramientas IA y desarrollo de aplicaciones IA. \\
 \end{tabularx}
-
-\vfill
-\center{\footnotesize Last updated: \today}
 
 \end{document}
