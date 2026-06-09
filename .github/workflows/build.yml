@@ -5,6 +5,14 @@ on:
   push:
     branches:
       - main
+    paths: &source-paths
+      - '**.tex'
+      - '**.bib'
+      - 'index.html'
+      - 'CNAME'
+      - '.github/workflows/**'
+  pull_request:
+    paths: *source-paths
   workflow_dispatch:
 
 # Least-privilege token for the official GitHub Pages deploy.
@@ -51,6 +59,11 @@ jobs:
           mkdir -p _site
           mv ${{ env.DIR }}/${{ env.FILE }}.pdf _site/
           cp index.html _site/
+      - name: Upload PDF preview artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.FILE }}.pdf
+          path: _site/${{ env.FILE }}.pdf
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
@@ -58,6 +71,9 @@ jobs:
 
   deploy:
     needs: [build]
+    # PRs build the CV for preview but never deploy; only pushes to main and
+    # manual runs publish to Pages.
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     environment:
       name: github-pages

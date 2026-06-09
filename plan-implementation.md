@@ -58,7 +58,7 @@ uses same engine (CI == local parity).
 
 ---
 
-## Phase 2 — Native GitHub Pages, drop orphan branch + 3rd job 🔧 (deploy verify pending merge)
+## Phase 2 — Native GitHub Pages, drop orphan branch + 3rd job ✅
 
 **Why:** `peaceiris` + `copy-to-branches` + the `build` orphan branch +
 `copy-index-to-build` job are fragile, use unmaintained 3rd-party actions, and
@@ -80,35 +80,43 @@ permissions to "Read and write" (or rely on the scoped Pages permissions below).
 - [x] Pages source set to "GitHub Actions" — done via API
       (`gh api -X POST repos/llascola/auto-cv/pages -f build_type=workflow`).
       Site URL: https://llascola.github.io/auto-cv/
-- [ ] Confirm the published URL serves the new PDF — **BLOCKED until merge to
-      main**. The `github-pages` environment only allows deploys from the
-      default branch (run 27235934581: build success, deploy rejected with
-      "Branch refactor/ci-tectonic is not allowed to deploy to github-pages").
-      Workflow logic is verified correct; just needs to run from main.
-- [ ] After merge: remove the old `build` orphan branch (now dead — Pages no
-      longer serves from it). `git push origin --delete build`.
+- [x] Confirm the published URL serves the new PDF — VERIFIED after merge.
+      Run 27236135725 on main: build + deploy both success.
+      https://llascola.github.io/auto-cv/ → 200 (redirect HTML),
+      https://llascola.github.io/auto-cv/cv.pdf → 200 application/pdf (~27KB).
+- [x] Old `build` orphan branch: none existed (earlier peaceiris deploys all
+      403'd before creating it). Nothing to delete.
 
 **Done when:** single build→deploy flow, no orphan branch, no 3rd-party deploy
 actions, PDF live on Pages.
 
 ---
 
-## Phase 3 — PR builds + PDF preview artifact ⬜
+## Phase 3 — PR builds + PDF preview artifact ✅
 
 **Why:** a CV is visual; diffing `.tex` misses layout breakage. Build on PRs to
 catch broken LaTeX before merge and attach the rendered PDF for review.
 
 **Steps:**
-- [ ] Add `pull_request` trigger (alongside existing `push: main`).
-- [ ] Add `workflow_dispatch` for manual runs.
-- [ ] Add `paths` filter so only relevant changes trigger builds:
-      `['**.tex', '**.bib', '.github/workflows/**']`.
-- [ ] Gate the deploy job to `push` on `main` only (PRs build but never deploy).
-- [ ] On PRs, upload `cv.pdf` via `actions/upload-artifact@v4` so reviewers can
-      download the rendered result.
+- [x] Add `pull_request` trigger (alongside existing `push: main`).
+- [x] Add `workflow_dispatch` for manual runs (done back in Phase 1).
+- [x] Add `paths` filter so only relevant changes trigger builds. Shared
+      between push + pull_request via a YAML anchor (`&source-paths` /
+      `*source-paths`). Covers `**.tex`, `**.bib`, `index.html`, `CNAME`,
+      `.github/workflows/**`.
+- [x] Gate the deploy job: `if: github.event_name != 'pull_request'` (PRs build
+      but never deploy; pushes to main + manual runs deploy).
+- [x] Upload `cv.pdf` via `actions/upload-artifact@v4` (path `_site/cv.pdf`) on
+      every run so reviewers can download the rendered result.
+
+**Verified:** PR #1, run 27236606733 — `build: success`, `deploy: skipped`,
+artifacts `cv.pdf` (26KB) + `github-pages` present.
+
+**Optional later:** the `github-pages` Pages artifact is still uploaded on PRs
+(harmless, just unused). Could gate that step to non-PR too. Minor.
 
 **Done when:** opening a PR compiles the CV and exposes the PDF; only merges to
-`main` deploy.
+`main` deploy. ✅
 
 ---
 
@@ -148,3 +156,10 @@ HTML/JSON-LD (schema.org) alongside PDF for SEO. Nice-to-have.
   Pinned Tectonic 0.14.1 on ubuntu-22.04 (latest SIGABRTs on format gen;
   0.14.1 needs libssl1.1 → 22.04). Deploy job still fails (peaceiris 403) —
   that's replaced in Phase 2.
+- 2026-06-09 — Phase 2 (native Pages) done + merged to main. Merge commit
+  5e8ea93. Run 27236135725 on main: build + deploy success. Live PDF served at
+  https://llascola.github.io/auto-cv/cv.pdf (200, application/pdf). Pages
+  build_type=workflow. Dropped peaceiris + copy-to-branches + orphan branch.
+- 2026-06-09 — Phase 3 (PR builds + preview) done via PR #1. Run 27236606733:
+  build success, deploy skipped on PR, cv.pdf artifact attached. Added
+  pull_request trigger, paths filter (YAML anchor), deploy gate, PDF artifact.
