@@ -92,22 +92,31 @@ actions, PDF live on Pages.
 
 ---
 
-## Phase 3 — PR builds + PDF preview artifact ⬜
+## Phase 3 — PR builds + PDF preview artifact ✅
 
 **Why:** a CV is visual; diffing `.tex` misses layout breakage. Build on PRs to
 catch broken LaTeX before merge and attach the rendered PDF for review.
 
 **Steps:**
-- [ ] Add `pull_request` trigger (alongside existing `push: main`).
-- [ ] Add `workflow_dispatch` for manual runs.
-- [ ] Add `paths` filter so only relevant changes trigger builds:
-      `['**.tex', '**.bib', '.github/workflows/**']`.
-- [ ] Gate the deploy job to `push` on `main` only (PRs build but never deploy).
-- [ ] On PRs, upload `cv.pdf` via `actions/upload-artifact@v4` so reviewers can
-      download the rendered result.
+- [x] Add `pull_request` trigger (alongside existing `push: main`).
+- [x] Add `workflow_dispatch` for manual runs (done back in Phase 1).
+- [x] Add `paths` filter so only relevant changes trigger builds. Shared
+      between push + pull_request via a YAML anchor (`&source-paths` /
+      `*source-paths`). Covers `**.tex`, `**.bib`, `index.html`, `CNAME`,
+      `.github/workflows/**`.
+- [x] Gate the deploy job: `if: github.event_name != 'pull_request'` (PRs build
+      but never deploy; pushes to main + manual runs deploy).
+- [x] Upload `cv.pdf` via `actions/upload-artifact@v4` (path `_site/cv.pdf`) on
+      every run so reviewers can download the rendered result.
+
+**Verified:** PR #1, run 27236606733 — `build: success`, `deploy: skipped`,
+artifacts `cv.pdf` (26KB) + `github-pages` present.
+
+**Optional later:** the `github-pages` Pages artifact is still uploaded on PRs
+(harmless, just unused). Could gate that step to non-PR too. Minor.
 
 **Done when:** opening a PR compiles the CV and exposes the PDF; only merges to
-`main` deploy.
+`main` deploy. ✅
 
 ---
 
@@ -151,3 +160,6 @@ HTML/JSON-LD (schema.org) alongside PDF for SEO. Nice-to-have.
   5e8ea93. Run 27236135725 on main: build + deploy success. Live PDF served at
   https://llascola.github.io/auto-cv/cv.pdf (200, application/pdf). Pages
   build_type=workflow. Dropped peaceiris + copy-to-branches + orphan branch.
+- 2026-06-09 — Phase 3 (PR builds + preview) done via PR #1. Run 27236606733:
+  build success, deploy skipped on PR, cv.pdf artifact attached. Added
+  pull_request trigger, paths filter (YAML anchor), deploy gate, PDF artifact.
