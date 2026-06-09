@@ -58,7 +58,7 @@ uses same engine (CI == local parity).
 
 ---
 
-## Phase 2 — Native GitHub Pages, drop orphan branch + 3rd job ⬜
+## Phase 2 — Native GitHub Pages, drop orphan branch + 3rd job 🔧 (deploy verify pending merge)
 
 **Why:** `peaceiris` + `copy-to-branches` + the `build` orphan branch +
 `copy-index-to-build` job are fragile, use unmaintained 3rd-party actions, and
@@ -70,17 +70,23 @@ run on every push. Official Pages deploy replaces all of it with one job.
 permissions to "Read and write" (or rely on the scoped Pages permissions below).
 
 **Steps:**
-- [ ] Add top-level `permissions:` block (`contents: read`, `pages: write`,
+- [x] Add top-level `permissions:` block (`contents: read`, `pages: write`,
       `id-token: write`) and a `concurrency` group (`pages`, cancel-in-progress).
-- [ ] Assemble the publish dir in the build job: `cv.pdf` + `index.html`
-      (+ `CNAME` only if non-empty — currently CNAME is empty, so likely drop it).
-- [ ] Replace `deploy` job with `actions/upload-pages-artifact` +
+- [x] Assemble the publish dir in the build job: `cv.pdf` + `index.html`
+      (CNAME was empty → dropped). Dir is `_site`.
+- [x] Replace `deploy` job with `actions/upload-pages-artifact@v3` +
       `actions/deploy-pages@v4` (environment `github-pages`).
-- [ ] Delete the `copy-index-to-build` job entirely.
-- [ ] In repo Settings → Pages, set source to "GitHub Actions" (manual step —
-      note it here for the human).
-- [ ] Confirm the published URL serves the new PDF; remove the old `build`
-      branch once Pages source is switched.
+- [x] Delete the `copy-index-to-build` job entirely.
+- [x] Pages source set to "GitHub Actions" — done via API
+      (`gh api -X POST repos/llascola/auto-cv/pages -f build_type=workflow`).
+      Site URL: https://llascola.github.io/auto-cv/
+- [ ] Confirm the published URL serves the new PDF — **BLOCKED until merge to
+      main**. The `github-pages` environment only allows deploys from the
+      default branch (run 27235934581: build success, deploy rejected with
+      "Branch refactor/ci-tectonic is not allowed to deploy to github-pages").
+      Workflow logic is verified correct; just needs to run from main.
+- [ ] After merge: remove the old `build` orphan branch (now dead — Pages no
+      longer serves from it). `git push origin --delete build`.
 
 **Done when:** single build→deploy flow, no orphan branch, no 3rd-party deploy
 actions, PDF live on Pages.
