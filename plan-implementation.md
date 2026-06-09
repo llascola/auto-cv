@@ -58,7 +58,7 @@ uses same engine (CI == local parity).
 
 ---
 
-## Phase 2 — Native GitHub Pages, drop orphan branch + 3rd job 🔧 (deploy verify pending merge)
+## Phase 2 — Native GitHub Pages, drop orphan branch + 3rd job ✅
 
 **Why:** `peaceiris` + `copy-to-branches` + the `build` orphan branch +
 `copy-index-to-build` job are fragile, use unmaintained 3rd-party actions, and
@@ -80,13 +80,12 @@ permissions to "Read and write" (or rely on the scoped Pages permissions below).
 - [x] Pages source set to "GitHub Actions" — done via API
       (`gh api -X POST repos/llascola/auto-cv/pages -f build_type=workflow`).
       Site URL: https://llascola.github.io/auto-cv/
-- [ ] Confirm the published URL serves the new PDF — **BLOCKED until merge to
-      main**. The `github-pages` environment only allows deploys from the
-      default branch (run 27235934581: build success, deploy rejected with
-      "Branch refactor/ci-tectonic is not allowed to deploy to github-pages").
-      Workflow logic is verified correct; just needs to run from main.
-- [ ] After merge: remove the old `build` orphan branch (now dead — Pages no
-      longer serves from it). `git push origin --delete build`.
+- [x] Confirm the published URL serves the new PDF — VERIFIED after merge.
+      Run 27236135725 on main: build + deploy both success.
+      https://llascola.github.io/auto-cv/ → 200 (redirect HTML),
+      https://llascola.github.io/auto-cv/cv.pdf → 200 application/pdf (~27KB).
+- [x] Old `build` orphan branch: none existed (earlier peaceiris deploys all
+      403'd before creating it). Nothing to delete.
 
 **Done when:** single build→deploy flow, no orphan branch, no 3rd-party deploy
 actions, PDF live on Pages.
@@ -148,3 +147,7 @@ HTML/JSON-LD (schema.org) alongside PDF for SEO. Nice-to-have.
   Pinned Tectonic 0.14.1 on ubuntu-22.04 (latest SIGABRTs on format gen;
   0.14.1 needs libssl1.1 → 22.04). Deploy job still fails (peaceiris 403) —
   that's replaced in Phase 2.
+- 2026-06-09 — Phase 2 (native Pages) done + merged to main. Merge commit
+  5e8ea93. Run 27236135725 on main: build + deploy success. Live PDF served at
+  https://llascola.github.io/auto-cv/cv.pdf (200, application/pdf). Pages
+  build_type=workflow. Dropped peaceiris + copy-to-branches + orphan branch.
