@@ -120,7 +120,7 @@ artifacts `cv.pdf` (26KB) + `github-pages` present.
 
 ---
 
-## Phase 4 — Quality gates: chktex + spellcheck ✅ (CI verify pending)
+## Phase 4 — Quality gates: chktex + spellcheck ✅
 
 **Why:** typos and LaTeX issues in a CV look bad. Both checks are cheap and
 high-value for this specific repo.
@@ -149,8 +149,8 @@ flagged. Real names/brands/acronyms that fail both live in an allow-list.
 - [x] `lint` job running `chktex cv.tex` (non-blocking).
 - [x] Bilingual aspell es/en spellcheck with allow-list (blocking).
 - [x] Gating documented above; deploy gated on lint.
-- [ ] Verify the `lint` job runs green in CI (apt install of aspell dicts +
-      chktex on the runner). → pending PR run.
+- [x] Verify the `lint` job runs green in CI — PR #2, run 27237637156:
+      lint success ("Spellcheck clean"), build success, deploy skipped on PR.
 
 **Done when:** PRs surface LaTeX lint + spelling issues; deploy blocked on a real
 typo.
@@ -184,3 +184,7 @@ HTML/JSON-LD (schema.org) alongside PDF for SEO. Nice-to-have.
 - 2026-06-09 — Phase 3 (PR builds + preview) done via PR #1. Run 27236606733:
   build success, deploy skipped on PR, cv.pdf artifact attached. Added
   pull_request trigger, paths filter (YAML anchor), deploy gate, PDF artifact.
+- 2026-06-09 — Phase 4 (lint gate) done via PR #2. Run 27237637156: lint +
+  build success, deploy skipped on PR. Bilingual spellcheck (scripts/
+  spellcheck.sh, es-OR-en, both-fail = typo) + allow-list + chktex. deploy
+  needs [build, lint]. All four planned phases complete.
