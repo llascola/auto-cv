@@ -6,6 +6,18 @@ on:
     branches:
       - main
   workflow_dispatch:
+
+# Least-privilege token for the official GitHub Pages deploy.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Only one Pages deploy at a time; newer pushes supersede in-flight ones.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
 jobs:
   build:
     # 22.04 ships libssl1.1, required by the pinned Tectonic 0.14.1 binary.
@@ -34,41 +46,23 @@ jobs:
       - name: Build CV
         run: tectonic ${{ env.FILE }}.tex
         working-directory: ${{ env.DIR }}
-      - name: move
-        run: mkdir -p github_artifacts && mv ${{ env.DIR }}/${{ env.FILE }}.pdf ./github_artifacts/
-      - name: Upload pdf as artifact
-        uses: actions/upload-artifact@v4
+      - name: Assemble site
+        run: |
+          mkdir -p _site
+          mv ${{ env.DIR }}/${{ env.FILE }}.pdf _site/
+          cp index.html _site/
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          name: ${{ env.FILE }}.pdf
-          path: ./github_artifacts
+          path: _site
+
   deploy:
     needs: [build]
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
-        with:
-          path: github_artifacts
-      - name: move
-        run: mkdir -p github_deploy && mv github_artifacts/*/* github_deploy
-      - name: deploy on orphan branch
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./github_deploy
-          publish_branch: build
-          force_orphan: true
-          enable_jekyll: true
-  copy-index-to-build:
-    needs: [deploy]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Copy To Branches Action
-        uses: planetoftheweb/copy-to-branches@v1.3
-        env:
-          key: main
-          files: index.html CNAME
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
