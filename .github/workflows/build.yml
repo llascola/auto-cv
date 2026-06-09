@@ -8,7 +8,10 @@ on:
   workflow_dispatch:
 jobs:
   build:
-    runs-on: ubuntu-latest
+    # 22.04 ships libssl1.1, required by the pinned Tectonic 0.14.1 binary.
+    # (ubuntu-latest/24.04 dropped libssl1.1; Tectonic `latest` SIGABRTs on
+    # format generation, so we pin a known-good version instead.)
+    runs-on: ubuntu-22.04
     env:
       # Edit here with the names of your latex file and directory (can use ".")
       DIR: .
