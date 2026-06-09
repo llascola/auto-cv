@@ -41,8 +41,9 @@ needed packages, handles bib itself, reproducible, ~30s cold build.
       Use `wtfjoke/setup-tectonic@v3` (or install binary directly) then run
       `tectonic cv.tex`.
 - [x] Add Tectonic package cache (`~/.cache/Tectonic`) via `actions/cache`.
-- [ ] Verify `cv.pdf` is produced and citations render (no `[?]` markers).
-      → verified via CI run (no tectonic/latexmk installed locally).
+- [x] Verify `cv.pdf` is produced and citations render (no `[?]` markers).
+      → CI run 27235648159, `build: success`, `cv.pdf` compiled. No citations
+        in cv.tex so no markers. Only cosmetic FontAwesome ToUnicode warnings.
 
 **Notes for future sessions:**
 - `cv.tex` has **no** `\bibliography`/`\addbibresource`; `citations.bib` is
@@ -62,6 +63,11 @@ uses same engine (CI == local parity).
 **Why:** `peaceiris` + `copy-to-branches` + the `build` orphan branch +
 `copy-index-to-build` job are fragile, use unmaintained 3rd-party actions, and
 run on every push. Official Pages deploy replaces all of it with one job.
+
+**Heads-up from Phase 1 run:** repo Actions token is currently **read-only**
+(old peaceiris deploy 403'd: "denied to github-actions[bot]"). Phase 2 must add a
+`permissions:` block AND the human must set Settings → Actions → Workflow
+permissions to "Read and write" (or rely on the scoped Pages permissions below).
 
 **Steps:**
 - [ ] Add top-level `permissions:` block (`contents: read`, `pages: write`,
@@ -131,4 +137,8 @@ HTML/JSON-LD (schema.org) alongside PDF for SEO. Nice-to-have.
 
 ## Progress log
 
-- _(append one line per completed phase: date, phase, commit SHA, notes)_
+- 2026-06-09 — Phase 1 (Tectonic) done. Branch `refactor/ci-tectonic`,
+  commits a87a541 + version/runner pins. CI run 27235648159 `build: success`.
+  Pinned Tectonic 0.14.1 on ubuntu-22.04 (latest SIGABRTs on format gen;
+  0.14.1 needs libssl1.1 → 22.04). Deploy job still fails (peaceiris 403) —
+  that's replaced in Phase 2.
