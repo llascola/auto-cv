@@ -11,6 +11,8 @@ on:
       - 'index.html'
       - 'CNAME'
       - '.github/workflows/**'
+      - '.github/spell-allow.txt'
+      - 'scripts/**'
   pull_request:
     paths: *source-paths
   workflow_dispatch:
@@ -27,6 +29,22 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Git repository
+        uses: actions/checkout@v4
+      - name: Install lint tools
+        run: sudo apt-get update && sudo apt-get install -y aspell aspell-en aspell-es chktex
+      - name: LaTeX lint (chktex)
+        # Style/warning level only — informational, never blocks the build.
+        run: chktex cv.tex
+        continue-on-error: true
+      - name: Bilingual spellcheck (es OR en)
+        # Blocks: fails only on words unknown to BOTH dictionaries (see
+        # scripts/spellcheck.sh and .github/spell-allow.txt).
+        run: bash scripts/spellcheck.sh cv.tex
+
   build:
     # 22.04 ships libssl1.1, required by the pinned Tectonic 0.14.1 binary.
     # (ubuntu-latest/24.04 dropped libssl1.1; Tectonic `latest` SIGABRTs on
@@ -70,7 +88,7 @@ jobs:
           path: _site
 
   deploy:
-    needs: [build]
+    needs: [build, lint]
     # PRs build the CV for preview but never deploy; only pushes to main and
     # manual runs publish to Pages.
     if: github.event_name != 'pull_request'

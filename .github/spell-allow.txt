@@ -1,0 +1,26 @@
+# Words that legitimately fail BOTH Spanish and English aspell dictionaries.
+# One lowercase word per line. Matching is case-insensitive.
+# Used by scripts/spellcheck.sh. Keep sorted-ish; add real names/terms only.
+
+# Acronyms
+apis
+ddd
+dsl
+ee
+uu
+
+# Tech terms
+backend
+cronjobs
+frontend
+golang
+js
+microservicios
+onboarding
+
+# Names / brands / handles
+fintech
+llascola
+memcache
+scola
+unr

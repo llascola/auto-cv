@@ -120,19 +120,40 @@ artifacts `cv.pdf` (26KB) + `github-pages` present.
 
 ---
 
-## Phase 4 — Quality gates: chktex + spellcheck ⬜
+## Phase 4 — Quality gates: chktex + spellcheck ✅
 
 **Why:** typos and LaTeX issues in a CV look bad. Both checks are cheap and
 high-value for this specific repo.
 
-**Steps:**
-- [ ] Add a `lint` job (or step) running `chktex cv.tex` for LaTeX warnings.
-- [ ] Add `codespell` (or `aspell`) over `cv.tex` for typos. Add an ignore list
-      for proper nouns / domain terms as needed.
-- [ ] Decide gating: warnings non-blocking at first, tighten later. Document
-      the choice here.
+**Key constraint:** cv.tex is **bilingual** — Spanish prose + English tech terms.
+A single dictionary floods false positives. Design (user's idea): a word is OK
+if EITHER Spanish OR English aspell knows it; only words unknown to BOTH are
+flagged. Real names/brands/acronyms that fail both live in an allow-list.
 
-**Done when:** PRs surface LaTeX lint + spelling issues.
+**Implementation:**
+- `scripts/spellcheck.sh` — checks the document body only (skips preamble),
+  runs aspell `--mode=tex` for `es` and `en`, intersects the two "unknown"
+  lists (`comm -12`), subtracts `.github/spell-allow.txt` (case-insensitive),
+  fails if anything remains. Verified locally: clean on current cv.tex; flags an
+  injected typo (`softwaree`); passes English-only words.
+- `.github/spell-allow.txt` — seeded from the 21 both-fail words on the current
+  CV (all legit: APIs, DDD, DSL, EE, UU, backend, frontend, cronjobs, onboarding,
+  golang, js, microservicios, fintech, llascola, memcache, scola, unr).
+- `lint` job in build.yml: installs aspell + dicts + chktex; runs `chktex`
+  (continue-on-error, informational) then the spellcheck (blocking).
+
+**Gating decision:** chktex = non-blocking (style noise). Spellcheck = blocking.
+`deploy` now `needs: [build, lint]`, so a real typo on main blocks the publish.
+
+**Steps:**
+- [x] `lint` job running `chktex cv.tex` (non-blocking).
+- [x] Bilingual aspell es/en spellcheck with allow-list (blocking).
+- [x] Gating documented above; deploy gated on lint.
+- [x] Verify the `lint` job runs green in CI — PR #2, run 27237637156:
+      lint success ("Spellcheck clean"), build success, deploy skipped on PR.
+
+**Done when:** PRs surface LaTeX lint + spelling issues; deploy blocked on a real
+typo.
 
 ---
 
@@ -163,3 +184,7 @@ HTML/JSON-LD (schema.org) alongside PDF for SEO. Nice-to-have.
 - 2026-06-09 — Phase 3 (PR builds + preview) done via PR #1. Run 27236606733:
   build success, deploy skipped on PR, cv.pdf artifact attached. Added
   pull_request trigger, paths filter (YAML anchor), deploy gate, PDF artifact.
+- 2026-06-09 — Phase 4 (lint gate) done via PR #2. Run 27237637156: lint +
+  build success, deploy skipped on PR. Bilingual spellcheck (scripts/
+  spellcheck.sh, es-OR-en, both-fail = typo) + allow-list + chktex. deploy
+  needs [build, lint]. All four planned phases complete.
