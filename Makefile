@@ -1,6 +1,11 @@
 NAME=cv
 
+# Default: build with Tectonic (single static binary, reproducible, matches CI).
 all:
+	tectonic ${NAME}.tex
+
+# Fallback for environments that still have a full TeXLive + latexmk.
+latexmk:
 	latexmk -pdf ${NAME}.tex
 
 clean:
@@ -8,3 +13,5 @@ clean:
 
 distclean: clean
 	rm -f ${NAME}.pdf
+
+.PHONY: all latexmk clean distclean

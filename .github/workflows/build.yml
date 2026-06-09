@@ -15,11 +15,20 @@ jobs:
     steps:
       - name: Set up Git repository
         uses: actions/checkout@v4
-      - name: cv
-        uses: dante-ev/latex-action@latest
+      - name: Cache Tectonic packages
+        uses: actions/cache@v4
         with:
-          root_file: ${{ env.FILE }}
-          working_directory: ${{ env.DIR }}
+          path: ~/.cache/Tectonic
+          key: tectonic-${{ runner.os }}-${{ hashFiles('**/*.tex') }}
+          restore-keys: |
+            tectonic-${{ runner.os }}-
+      - name: Set up Tectonic
+        uses: wtfjoke/setup-tectonic@v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build CV
+        run: tectonic ${{ env.FILE }}.tex
+        working-directory: ${{ env.DIR }}
       - name: move
         run: mkdir -p github_artifacts && mv ${{ env.DIR }}/${{ env.FILE }}.pdf ./github_artifacts/
       - name: Upload pdf as artifact
