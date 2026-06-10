@@ -10,6 +10,7 @@ ee
 uu
 
 # Tech terms
+ci
 backend
 cronjobs
 frontend

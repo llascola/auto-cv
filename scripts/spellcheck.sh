@@ -10,11 +10,11 @@
 # Real names / brands / acronyms that legitimately fail both dictionaries live
 # in the allow-list (.github/spell-allow.txt, one lowercase word per line).
 #
-# Usage: scripts/spellcheck.sh [cv.tex] [.github/spell-allow.txt]
+# Usage: scripts/spellcheck.sh [LucianoScolaCV.tex] [.github/spell-allow.txt]
 # Exit 0 = clean, exit 1 = unknown words remain.
 set -euo pipefail
 
-TEX="${1:-cv.tex}"
+TEX="${1:-LucianoScolaCV.tex}"
 ALLOW="${2:-.github/spell-allow.txt}"
 
 # Only check the document body; the LaTeX preamble is config, not prose.
