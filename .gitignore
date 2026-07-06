@@ -1,0 +1,11 @@
+# LaTeX build artifacts (CI rebuilds the PDF and deploys to GitHub Pages)
+*.pdf
+*.aux
+*.log
+*.out
+*.toc
+*.bbl
+*.blg
+*.fls
+*.fdb_latexmk
+*.synctex.gz
